@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/glad.dir/lib/glad/src/glad.c.o -c /Users/at/LearnOpenGL/lib/glad/src/glad.c",
+  "file": "/Users/at/LearnOpenGL/lib/glad/src/glad.c",
+  "output": "CMakeFiles/glad.dir/lib/glad/src/glad.c.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/stb_image.dir/lib/stb/src/stb_image.cpp.o -c /Users/at/LearnOpenGL/lib/stb/src/stb_image.cpp",
+  "file": "/Users/at/LearnOpenGL/lib/stb/src/stb_image.cpp",
+  "output": "CMakeFiles/stb_image.dir/lib/stb/src/stb_image.cpp.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/OpenGLBinaryStyle.dir/main.cpp.o -c /Users/at/LearnOpenGL/main.cpp",
+  "file": "/Users/at/LearnOpenGL/main.cpp",
+  "output": "CMakeFiles/OpenGLBinaryStyle.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/OpenGLBinaryStyle.dir/shaderClass.cpp.o -c /Users/at/LearnOpenGL/shaderClass.cpp",
+  "file": "/Users/at/LearnOpenGL/shaderClass.cpp",
+  "output": "CMakeFiles/OpenGLBinaryStyle.dir/shaderClass.cpp.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/OpenGLBinaryStyle.dir/VBO.cpp.o -c /Users/at/LearnOpenGL/VBO.cpp",
+  "file": "/Users/at/LearnOpenGL/VBO.cpp",
+  "output": "CMakeFiles/OpenGLBinaryStyle.dir/VBO.cpp.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/OpenGLBinaryStyle.dir/VAO.cpp.o -c /Users/at/LearnOpenGL/VAO.cpp",
+  "file": "/Users/at/LearnOpenGL/VAO.cpp",
+  "output": "CMakeFiles/OpenGLBinaryStyle.dir/VAO.cpp.o"
+},
+{
+  "directory": "/Users/at/LearnOpenGL/build",
+  "command": "/usr/bin/clang++ -I/Users/at/LearnOpenGL -I/Users/at/LearnOpenGL/lib/glad/include -I/Users/at/LearnOpenGL/lib/glfw/include -I/Users/at/LearnOpenGL/lib/stb/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.5.sdk -o CMakeFiles/OpenGLBinaryStyle.dir/EBO.cpp.o -c /Users/at/LearnOpenGL/EBO.cpp",
+  "file": "/Users/at/LearnOpenGL/EBO.cpp",
+  "output": "CMakeFiles/OpenGLBinaryStyle.dir/EBO.cpp.o"
+}
+]

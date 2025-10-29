@@ -1,0 +1,11 @@
+# ninja log v7
+2	91	1758106456725794707	CMakeFiles/OpenGLBinaryStyle.dir/VAO.cpp.o	ce5ed85c1094d486
+2	92	1758106456725573624	CMakeFiles/OpenGLBinaryStyle.dir/VBO.cpp.o	fc4dcc24dd1785ea
+3	92	1758106456726268957	CMakeFiles/OpenGLBinaryStyle.dir/EBO.cpp.o	33c1be85dc2e888c
+1	156	1758106456724428582	CMakeFiles/glad.dir/lib/glad/src/glad.c.o	40d57169c32bb305
+157	298	1758106456880202749	libglad.a	c3bdee16f70849b8
+1	415	1758106456724753791	CMakeFiles/stb_image.dir/lib/stb/src/stb_image.cpp.o	ba7ce48c271e0728
+415	472	1758106457138879582	libstb_image.a	279a43845606196c
+1	761	1758106456724952707	CMakeFiles/OpenGLBinaryStyle.dir/main.cpp.o	5493d7c39bf446fc
+2	766	1758106456725186874	CMakeFiles/OpenGLBinaryStyle.dir/shaderClass.cpp.o	f1eeffeedf5ca4f6
+766	945	1758106457489449166	OpenGLBinaryStyle	fc639d2a3fd6070d
