@@ -37,6 +37,7 @@ add_executable(OpenGLBinaryStyle
     src/VAO.cpp
     src/EBO.cpp
     src/Texture.cpp
+    src/Camera.cpp
 )
 
 # Link all required libs

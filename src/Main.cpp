@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Camera.h"
+
 const unsigned int width = 800;
 const unsigned int height = 800;
 
@@ -116,7 +118,9 @@ int main()
 	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 	std::cout << "Framebuffer size: " << fbWidth << "×" << fbHeight << "\n";
 	glViewport(0, 0, fbWidth, fbHeight);
-
+	// 	normally simply just glViewport(0,0,width,height);
+	// improved by calling glfwGetFramebufferSize and using that for glViewport, which is better on macOS Retina.
+	// So on Retina: your viewport handling is more correct (as long as you also use fbWidth/fbHeight for projection).
 
 
 	// Generates Shader object using shaders default.vert and default.frag
@@ -153,6 +157,8 @@ int main()
 	double prevTime = glfwGetTime();
 
 	glEnable(GL_DEPTH_TEST);
+
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 	
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
@@ -164,32 +170,10 @@ int main()
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
 
-		double curTime = glfwGetTime();
-		if (curTime - prevTime >= 1/60) {
-			rotation += 0.5f;
-			prevTime = curTime;
-		}
 
-		// model, view and projection transformation matrices
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 proj = glm::mat4(1.0f);
-
-		// rotates the actual vertices of the 3d object
-		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-		// puts the perspective onto the screen
-		view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
-		proj = glm::perspective(glm::radians(45.0f), (float)(width/height), 0.1f, 100.0f);
-
-		// import the uniforms from the vertex shader into the main function --
-		// use matrix4fv so that gl doesn't transpose the matrix
-		int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		int viewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		int projLoc = glGetUniformLocation(shaderProgram.ID, "proj");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-	
+		camera.Inputs(window);
+		// send uniform to the shader
+		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
 		// Only after activating (one float)
 		glUniform1f(uniID, 0.5f);
