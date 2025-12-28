@@ -24,7 +24,7 @@ class Camera
 
         bool firstClick = true;
 
-        float speed = 0.1f;
+        float speed = 0.0001f;
         float sensitivity = 100.0f;
         
 

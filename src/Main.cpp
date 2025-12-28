@@ -118,10 +118,15 @@ int main()
 	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 	std::cout << "Framebuffer size: " << fbWidth << "×" << fbHeight << "\n";
 	glViewport(0, 0, fbWidth, fbHeight);
+
+	int winW, winH;
+	glfwGetWindowSize(window, &winW, &winH);
+	std::cout << "Window size: " << winW <<  "×" << winH << '\n';
 	// 	normally simply just glViewport(0,0,width,height);
 	// improved by calling glfwGetFramebufferSize and using that for glViewport, which is better on macOS Retina.
 	// So on Retina: your viewport handling is more correct (as long as you also use fbWidth/fbHeight for projection).
 
+	Camera camera(fbWidth, fbHeight, glm::vec3(0.0f, 0.0f, 2.0f));
 
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("/Users/at/LearnOpenGL/resources/shaders/default.vert", "/Users/at/LearnOpenGL/resources/shaders/default.frag");
@@ -157,8 +162,6 @@ int main()
 	double prevTime = glfwGetTime();
 
 	glEnable(GL_DEPTH_TEST);
-
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
 	
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
