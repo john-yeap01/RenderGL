@@ -94,8 +94,8 @@ int main()
 	// So that means we only have the modern functions
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(width, height, "YoutubeOpenGL", NULL, NULL);
+	// Create a GLFWwindow object of 800 by 800 pixel
+	GLFWwindow* window = glfwCreateWindow(width, height, "WINDOW", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -142,7 +142,7 @@ int main()
 	// Generates Element Buffer Object and links it to indices
 	EBO EBO1(indices, sizeof(indices));
 
-	// Links VBO to VAO
+	// Links VBO to VAO -- how shader receives the vertex data
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*) 0);
 	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3*sizeof(float)));
 	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6*sizeof(float)));
@@ -151,15 +151,12 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 	// get a uniform variable called scale from the compiled shader program
-	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
+	GLint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 	
 	//TEXTURE
 	Texture texture(("/Users/at/LearnOpenGL/resources/assets/brick.png"), GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
 	texture.Bind();
 	texture.texUnit (shaderProgram, "tex0", 0);
-
-	float rotation = 0.0f;
-	double prevTime = glfwGetTime();
 
 	glEnable(GL_DEPTH_TEST);
 	
@@ -185,7 +182,7 @@ int main()
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
 		// glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
-		glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(int), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(GLuint), GL_UNSIGNED_INT, 0);
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events

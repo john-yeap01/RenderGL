@@ -4,7 +4,7 @@
 layout (location = 0) in vec3 aPos;
 // Colors
 layout (location = 1) in vec3 aColor;
-
+// these attributes are received from the VAO
 layout (location = 2) in vec2 aTex;
 
 
