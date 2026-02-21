@@ -22,29 +22,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-// Vertices coordinates
-// triangle
-// GLfloat vertices[] = {
-//     // Positions                                 // Colors (R, G, B)
-//     -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,      1.0f, 0.0f, 0.0f,  // Red     - Lower left corner
-//      0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,      0.0f, 1.0f, 0.0f,  // Green   - Lower right corner
-//      0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,  0.0f, 0.0f, 1.0f,  // Blue    - Upper corner
-//     -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   1.0f, 1.0f, 0.0f,  // Yellow  - Inner left
-//      0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   0.0f, 1.0f, 1.0f,  // Cyan    - Inner right
-//      0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,      1.0f, 0.0f, 1.0f   // Magenta - Inner down
-// };
-
-// square 
-// GLfloat vertices[] = {
-//     // positions          // colors           // texture coords
-//      0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-//      0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-//     -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-//     -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-// };
+void processInput(GLFWwindow* window) {
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+		glfwSetWindowShouldClose(window, true);
+	}
+}
 
 GLfloat vertices[] = {
-    // positions            // colors         // tex coords
+    // positions            // colors         // tex coords (UVs) -- for each vertex, this 2d coord on the texture corresponds to the pixel 3d position
      0.5f,  0.0f,  0.5f,     1.0f, 0.0f, 0.0f,  1.0f, 1.0f, // base front-right
      0.5f,  0.0f, -0.5f,     0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // base back-right
     -0.5f,  0.0f, -0.5f,     0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // base back-left
@@ -53,20 +38,7 @@ GLfloat vertices[] = {
      0.0f,  0.8f,  0.0f,     1.0f, 0.0f, 1.0f,  0.5f, 0.5f  // apex (top)
 };
 
-// Indices for vertices order
-//triangle
-// GLuint indices[] =
-// {
-// 	0, 3, 5, // Lower left triangle
-// 	3, 2, 4, // Lower right triangle
-// 	5, 4, 1 // Upper triangle
-// };
 
-//square
-// GLuint indices[] = {
-//     0, 1, 2,   // first triangle (lower-left, lower-right, upper-right)
-//     2, 3, 0    // second triangle (upper-right, upper-left, lower-left)
-// };
 
 GLuint indices[] = {
     // base (two triangles)
@@ -143,6 +115,7 @@ int main()
 	EBO EBO1(indices, sizeof(indices));
 
 	// Links VBO to VAO -- how shader receives the vertex data
+	// Reads the VBO data, its type, and its attribute stride and offset
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8*sizeof(float), (void*) 0);
 	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8*sizeof(float), (void*)(3*sizeof(float)));
 	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8*sizeof(float), (void*)(6*sizeof(float)));
@@ -159,17 +132,21 @@ int main()
 	texture.texUnit (shaderProgram, "tex0", 0);
 
 	glEnable(GL_DEPTH_TEST);
+
+	
+	float theta = 0.0f;
+	float speed = 5.0f; // deg / sec
 	
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		processInput(window);
 		// Specify the color of the background
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
 		shaderProgram.Activate();
-
 
 		camera.Inputs(window);
 		// send uniform to the shader
@@ -178,6 +155,19 @@ int main()
 		// Only after activating (one float)
 		glUniform1f(uniID, 0.5f);
 		texture.Bind();
+
+		glm::mat4 model = glm::identity<glm::mat4>();
+
+		double timeNow = glfwGetTime();
+		theta = speed * timeNow;
+		model = glm::rotate(model, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
+		unsigned int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		// For UV distortion (float uniform)
+		GLint timeLoc = glGetUniformLocation(shaderProgram.ID, "time");
+		glUniform1f(timeLoc, (GLfloat)timeNow);
+
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices

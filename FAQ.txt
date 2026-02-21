@@ -59,3 +59,46 @@ The mental model to keep
 Window size = UI coordinate space (mouse, window dimensions)
 Framebuffer size = render target pixel space (viewport, projection aspect)
 If you remember just that, all the “why Mac needs extra stuff” disappears.
+
+
+
+
+
+Previous vertices
+// Vertices coordinates
+// triangle 1
+// GLfloat vertices[] = {
+//     // Positions                                 // Colors (R, G, B)
+//     -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,      1.0f, 0.0f, 0.0f,  // Red     - Lower left corner
+//      0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,      0.0f, 1.0f, 0.0f,  // Green   - Lower right corner
+//      0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,  0.0f, 0.0f, 1.0f,  // Blue    - Upper corner
+//     -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   1.0f, 1.0f, 0.0f,  // Yellow  - Inner left
+//      0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,   0.0f, 1.0f, 1.0f,  // Cyan    - Inner right
+//      0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f,      1.0f, 0.0f, 1.0f   // Magenta - Inner down
+// };
+
+// square  1
+// GLfloat vertices[] = {
+//     // positions          // colors           // texture coords
+//      0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+//      0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+//     -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+//     -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+// };
+
+// Indices for vertices order
+//triangle 1
+// GLuint indices[] =
+// {
+// 	0, 3, 5, // Lower left triangle
+// 	3, 2, 4, // Lower right triangle
+// 	5, 4, 1 // Upper triangle
+// };
+
+//square 1
+// GLuint indices[] = {
+//     0, 1, 2,   // first triangle (lower-left, lower-right, upper-right)
+//     2, 3, 0    // second triangle (upper-right, upper-left, lower-left)
+// };
+
+
