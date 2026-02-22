@@ -31,7 +31,7 @@ class Camera
         Camera (int width, int height, glm::vec3 Position);
 
         // creates+sends the view+ projection matrices to shader
-        void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
+        void CameraMatrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
 
         void Inputs(GLFWwindow* window);
 
