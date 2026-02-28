@@ -38,7 +38,93 @@ GLfloat vertices[] = {
      0.0f,  0.8f,  0.0f,     1.0f, 0.0f, 1.0f,  0.5f, 0.5f  // apex (top)
 };
 
+GLfloat light_vertices[] = {
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
 
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f
+};
+
+GLfloat cube_vertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+};
 
 GLuint indices[] = {
     // base (two triangles)
@@ -103,16 +189,27 @@ int main()
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("/Users/at/LearnOpenGL/resources/shaders/default.vert", "/Users/at/LearnOpenGL/resources/shaders/default.frag");
 
+	Shader lightProgram("/Users/at/LearnOpenGL/resources/shaders/light.vert", "/Users/at/LearnOpenGL/resources/shaders/light.frag");
 
+	Shader cubeProgram("/Users/at/LearnOpenGL/resources/shaders/cube.vert", "/Users/at/LearnOpenGL/resources/shaders/cube.frag");
 
 	// Generates Vertex Array Object and binds it
 	VAO VAO1;
-	VAO1.Bind();
+	VAO VAO2;
+	VAO VAO3;
 
+	// Use FIRST vert array now
+	VAO1.Bind();
 	// Generates Vertex Buffer Object and links it to vertices
 	VBO VBO1(vertices, sizeof(vertices));
 	// Generates Element Buffer Object and links it to indices
 	EBO EBO1(indices, sizeof(indices));
+
+	// VBO for the light source
+	VBO VBO2(light_vertices, sizeof(light_vertices));
+
+	// VBO for cube
+	VBO VBO3(cube_vertices, sizeof(cube_vertices));
 
 	// Links VBO to VAO -- how shader receives the vertex data
 	// Reads the VBO data, its type, and its attribute stride and offset
@@ -123,6 +220,22 @@ int main()
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
+
+	// Now bind for the lighting cube
+	VAO2.Bind();
+	VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 3*sizeof(float), (void*) 0);
+
+	VAO2.Unbind();
+	VBO2.Unbind();
+
+	// Now bind for the object cube
+	VAO3.Bind();
+	VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 6*sizeof(float), (void*) 0);
+	VAO3.LinkAttrib(VBO3, 1, 3, GL_FLOAT, 6*sizeof(float), (void*) 0);
+
+	VAO3.Unbind();
+	VBO3.Unbind();
+
 	// get a uniform variable called scale from the compiled shader program
 	GLint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 	
@@ -150,7 +263,7 @@ int main()
 
 		camera.Inputs(window);
 		// send uniform to the shader
-		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
+		camera.CameraMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
 		// Only after activating (one float)
 		glUniform1f(uniID, 0.5f);
@@ -171,8 +284,43 @@ int main()
 		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
 		// Draw primitives, number of indices, datatype of indices, index of indices
-		// glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+
+		VAO1.Unbind();
+		
+		// NOW ACTIVATE THE LIGHTING SHADER 
+		lightProgram.Activate();
+		camera.CameraMatrix(45.0f, 0.1f, 100.0f, lightProgram, "camMatrix");
+
+		glm::mat4 cube_model = glm::mat4(1.0f);
+		cube_model = glm::translate(cube_model, glm::vec3(2.0f, 1.5f, 1.75f));
+		unsigned int cube_modelLoc = glGetUniformLocation(lightProgram.ID, "model");
+		glUniformMatrix4fv(cube_modelLoc, 1, GL_FALSE, glm::value_ptr(cube_model));
+		
+		// DRAW THE LIGHTING CUBE
+		VAO2.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		VAO2.Unbind();
+
+		// NOW ACTIVATE THE BASIC CUBE  
+		cubeProgram.Activate();
+		camera.CameraMatrix(45.0f, 0.1f, 100.0f, cubeProgram, "camMatrix");
+
+		cube_model = glm::mat4(1.0f);
+		cube_model = glm::translate(cube_model, glm::vec3(1.0f, 0.5f, 0.5f));
+		cube_modelLoc = glGetUniformLocation(cubeProgram.ID, "model");
+		glUniformMatrix4fv(cube_modelLoc, 1, GL_FALSE, glm::value_ptr(cube_model));
+
+		cubeProgram.SetFloat("ambientStrength", 0.4f);
+		cubeProgram.SetVec3("lightPos", glm::vec3(2.0f, 1.5f, 1.75f)); // same as lamp position
+		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+		VAO3.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		VAO3.Unbind();
+	
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -185,11 +333,17 @@ int main()
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
+
+	VAO2.Delete();
+	VBO2.Delete();
+	
+	VAO3.Delete();
+	VBO3.Delete();
+	
 	texture.Delete();
 	shaderProgram.Delete();
-	// Delete window before ending the program
+
 	glfwDestroyWindow(window);
-	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;
 }
