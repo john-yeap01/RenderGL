@@ -231,7 +231,7 @@ int main()
 	// Now bind for the object cube
 	VAO3.Bind();
 	VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 6*sizeof(float), (void*) 0);
-	VAO3.LinkAttrib(VBO3, 1, 3, GL_FLOAT, 6*sizeof(float), (void*) 0);
+	VAO3.LinkAttrib(VBO3, 1, 3, GL_FLOAT, 6*sizeof(float), (void*)(3*sizeof(float)));
 
 	VAO3.Unbind();
 	VBO3.Unbind();
@@ -315,7 +315,7 @@ int main()
 		cubeProgram.SetVec3("lightPos", glm::vec3(2.0f, 1.5f, 1.75f)); // same as lamp position
 		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-
+		cubeProgram.SetVec3("viewPos", camera.Position);
 
 		VAO3.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);

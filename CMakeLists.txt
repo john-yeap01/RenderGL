@@ -31,7 +31,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/resources/assets
 
 # Create main app
 add_executable(OpenGLBinaryStyle 
-    src/main.cpp
+    src/Main.cpp
     src/shaderClass.cpp
     src/VBO.cpp
     src/VAO.cpp
