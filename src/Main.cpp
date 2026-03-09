@@ -311,7 +311,7 @@ int main()
 		cube_modelLoc = glGetUniformLocation(cubeProgram.ID, "model");
 		glUniformMatrix4fv(cube_modelLoc, 1, GL_FALSE, glm::value_ptr(cube_model));
 
-		cubeProgram.SetFloat("ambientStrength", 0.4f);
+		cubeProgram.SetFloat("ambientStrength", 0.1f);
 		cubeProgram.SetVec3("lightPos", glm::vec3(2.0f, 1.5f, 1.75f)); // same as lamp position
 		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
