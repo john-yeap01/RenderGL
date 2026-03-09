@@ -293,8 +293,7 @@ int main()
 
 		glm::mat4 cube_model = glm::mat4(1.0f);
 		cube_model = glm::translate(cube_model, glm::vec3(2.0f, 1.5f, 1.75f));
-		unsigned int cube_modelLoc = glGetUniformLocation(lightProgram.ID, "model");
-		glUniformMatrix4fv(cube_modelLoc, 1, GL_FALSE, glm::value_ptr(cube_model));
+		lightProgram.SetMat4("model", cube_model);
 		
 		// DRAW THE LIGHTING CUBE
 		VAO2.Bind();
@@ -307,8 +306,7 @@ int main()
 
 		cube_model = glm::mat4(1.0f);
 		cube_model = glm::translate(cube_model, glm::vec3(1.0f, 0.5f, 0.5f));
-		cube_modelLoc = glGetUniformLocation(cubeProgram.ID, "model");
-		glUniformMatrix4fv(cube_modelLoc, 1, GL_FALSE, glm::value_ptr(cube_model));
+		cubeProgram.SetMat4("model", cube_model);
 
 		cubeProgram.SetFloat("ambientStrength", 0.1f);
 		cubeProgram.SetVec3("lightPos", glm::vec3(2.0f, 1.5f, 1.75f)); // same as lamp position
