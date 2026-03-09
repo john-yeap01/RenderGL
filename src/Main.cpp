@@ -274,8 +274,7 @@ int main()
 		double timeNow = glfwGetTime();
 		theta = speed * timeNow;
 		model = glm::rotate(model, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
-		unsigned int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		shaderProgram.SetMat4("model", model);
 
 		// For UV distortion (float uniform)
 		GLint timeLoc = glGetUniformLocation(shaderProgram.ID, "time");
