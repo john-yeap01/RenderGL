@@ -287,29 +287,38 @@ int main()
 
 		VAO1.Unbind();
 		
-		// NOW ACTIVATE THE LIGHTING SHADER 
+		// NOW ACTIVATE THE LIGHTING SHADER, VISUAL CUBE
 		lightProgram.Activate();
 		camera.CameraMatrix(45.0f, 0.1f, 100.0f, lightProgram, "camMatrix");
 
-		glm::mat4 cube_model = glm::mat4(1.0f);
-		cube_model = glm::translate(cube_model, glm::vec3(2.0f, 1.5f, 1.75f));
-		lightProgram.SetMat4("model", cube_model);
+		// move the lighting source
+		float radius = 2.0f;
+		glm::vec3 lightPos = glm::vec3(
+			radius * cos(glm::radians(theta)),
+			1.5f,
+			radius * sin(glm::radians(theta))
+		);
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.3f));
+		lightProgram.SetMat4("model", lightModel);
 		
 		// DRAW THE LIGHTING CUBE
 		VAO2.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		VAO2.Unbind();
 
-		// NOW ACTIVATE THE BASIC CUBE  
+		// NOW ACTIVATE THE LIT CUBE  
 		cubeProgram.Activate();
 		camera.CameraMatrix(45.0f, 0.1f, 100.0f, cubeProgram, "camMatrix");
 
-		cube_model = glm::mat4(1.0f);
-		cube_model = glm::translate(cube_model, glm::vec3(1.0f, 0.5f, 0.5f));
-		cubeProgram.SetMat4("model", cube_model);
+		glm::mat4 cubeModel = glm::mat4(1.0f);
+		cubeModel = glm::translate(cubeModel, glm::vec3(1.0f, 0.5f, 0.5f));
+		cubeProgram.SetMat4("model", cubeModel);
 
+		// actual lighting on the lit cube
 		cubeProgram.SetFloat("ambientStrength", 0.1f);
-		cubeProgram.SetVec3("lightPos", glm::vec3(2.0f, 1.5f, 1.75f)); // same as lamp position
+		cubeProgram.SetVec3("lightPos", lightPos); // same as lamp position
 		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		cubeProgram.SetVec3("viewPos", camera.Position);

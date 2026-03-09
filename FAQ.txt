@@ -102,3 +102,7 @@ Previous vertices
 // };
 
 
+
+
+Simulating materials
+A table can be found at http://devernay.free.fr/cours/opengl/materials.html
