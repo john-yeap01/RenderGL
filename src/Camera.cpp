@@ -1,112 +1,98 @@
 #include "Camera.h"
 
+#include <algorithm>
+#include <cmath>
 
-Camera::Camera (int width, int height, glm::vec3 position)
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
+
+Camera::Camera(int width, int height, glm::vec3 position)
+    : Position(position),
+      width_(width),
+      height_(height)
 {
-    Camera::width = width;
-    Camera::height = height;
-    Position = position;
 }
 
-void Camera::CameraMatrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform)
+void Camera::Resize(int width, int height)
 {
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
-
-    view = glm::lookAt(Position, Position+Orientation, Up);
-    projection = glm::perspective(glm::radians(FOVdeg),
-                              (float)width / (float)height,
-                              nearPlane,
-                              farPlane);
-
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+    width_ = std::max(1, width);
+    height_ = std::max(1, height);
 }
 
-void Camera::Inputs(GLFWwindow* window)
+void Camera::ApplyInput(const InputState& inputState, float deltaSeconds)
 {
-	// Handles key inputs
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		Position += speed * Orientation;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		Position += speed * -glm::normalize(glm::cross(Orientation, Up));
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		Position += speed * -Orientation;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		Position += speed * glm::normalize(glm::cross(Orientation, Up));
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		Position += speed * Up;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-	{
-		Position += speed * -Up;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-	{
-		speed = 0.04f;
-	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-	{
-		speed = 0.01f;
-	}
+    const float movementSpeed = baseSpeed_ * (inputState.boost ? boostMultiplier_ : 1.0f) * deltaSeconds;
+    const glm::vec3 right = glm::normalize(glm::cross(Orientation, Up));
 
+    if (inputState.moveForward)
+    {
+        Position += movementSpeed * Orientation;
+    }
+    if (inputState.moveBackward)
+    {
+        Position -= movementSpeed * Orientation;
+    }
+    if (inputState.moveLeft)
+    {
+        Position -= movementSpeed * right;
+    }
+    if (inputState.moveRight)
+    {
+        Position += movementSpeed * right;
+    }
+    if (inputState.moveUp)
+    {
+        Position += movementSpeed * Up;
+    }
+    if (inputState.moveDown)
+    {
+        Position -= movementSpeed * Up;
+    }
 
-    int winW, winH;
-    glfwGetWindowSize(window, &winW, &winH);
+    if (!inputState.lookActive || !inputState.captureCameraInput)
+    {
+        firstLookFrame_ = true;
+        return;
+    }
 
+    const float windowWidth = static_cast<float>(std::max(1, inputState.windowWidth));
+    const float windowHeight = static_cast<float>(std::max(1, inputState.windowHeight));
+    const float centerX = windowWidth * 0.5f;
+    const float centerY = windowHeight * 0.5f;
 
-	// Handles mouse inputs
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-	{
-		// Hides mouse cursor
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    if (firstLookFrame_)
+    {
+        firstLookFrame_ = false;
+        return;
+    }
 
-		// Prevents camera from jumping on the first click
-		if (firstClick)
-		{
-			glfwSetCursorPos(window, (winW / 2), (winH / 2));
-			firstClick = false;
-		}
+    const float rotX = sensitivity_ * static_cast<float>(inputState.mouseY - centerY) / windowHeight;
+    const float rotY = sensitivity_ * static_cast<float>(inputState.mouseX - centerX) / windowWidth;
 
-		// Stores the coordinates of the cursor
-		double mouseX;
-		double mouseY;
-		// Fetches the coordinates of the cursor
-		glfwGetCursorPos(window, &mouseX, &mouseY);
+    const glm::vec3 rotationAxis = glm::normalize(glm::cross(Orientation, Up));
+    glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), rotationAxis);
 
-		// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
-		// and then "transforms" them into degrees 
-		float rotX = sensitivity * (float)(mouseY - (winH / 2)) / winH;
-		float rotY = sensitivity * (float)(mouseX - (winW / 2)) / winW;
+    if (std::abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+    {
+        Orientation = newOrientation;
+    }
 
-		// Calculates upcoming vertical change in the Orientation
-		glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
+    Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+    Orientation = glm::normalize(Orientation);
+}
 
-		// Decides whether or not the next vertical Orientation is legal or not
-		if (abs(glm::angle(newOrientation, Up) - glm::radians(90.0f)) <= glm::radians(85.0f))
-		{
-			Orientation = newOrientation;
-		}
+glm::mat4 Camera::ViewMatrix() const
+{
+    return glm::lookAt(Position, Position + Orientation, Up);
+}
 
-		// Rotates the Orientation left and right
-		Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
+glm::mat4 Camera::ProjectionMatrix(float fovDegrees, float nearPlane, float farPlane) const
+{
+    return glm::perspective(glm::radians(fovDegrees), static_cast<float>(width_) / static_cast<float>(height_), nearPlane, farPlane);
+}
 
-		// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
-		glfwSetCursorPos(window, (winW / 2), (winH / 2));
-	}
-	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-	{
-		// Unhides cursor since camera is not looking around anymore
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		// Makes sure the next time the camera looks around it doesn't jump
-		firstClick = true;
-	}
+glm::mat4 Camera::ViewProjectionMatrix(float fovDegrees, float nearPlane, float farPlane) const
+{
+    return ProjectionMatrix(fovDegrees, nearPlane, farPlane) * ViewMatrix();
 }

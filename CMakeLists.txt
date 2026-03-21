@@ -2,8 +2,14 @@ cmake_minimum_required(VERSION 3.14)
 project(OpenGLBinaryStyle)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add include paths
+set(RENDERGL_IMGUI_DIR ${CMAKE_SOURCE_DIR}/3rdparty/imgui)
+set(RENDERGL_HAS_IMGUI OFF)
+if(EXISTS ${RENDERGL_IMGUI_DIR}/imgui.cpp)
+    set(RENDERGL_HAS_IMGUI ON)
+endif()
+
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     lib/glad/include
@@ -12,13 +18,8 @@ include_directories(
     lib
 )
 
-# Add GLAD source
 add_library(glad STATIC lib/glad/src/glad.c)
 
-# Link directory where libglfw3.a lives
-link_directories(${CMAKE_SOURCE_DIR}/lib/glfw/lib)
-
-# --- build stb_image as its own STATIC library ---
 add_library(stb_image STATIC
     lib/stb/src/stb_image.cpp
 )
@@ -26,41 +27,70 @@ target_include_directories(stb_image PUBLIC
     lib/stb/include
 )
 
-file(COPY ${CMAKE_SOURCE_DIR}/resources/assets
-     DESTINATION ${CMAKE_BINARY_DIR})
-
-# Create main app
-add_executable(OpenGLBinaryStyle
+set(RENDERGL_SOURCES
     src/Main.cpp
-    src/shaderClass.cpp
-    src/VBO.cpp
-    src/VAO.cpp
+    src/Camera.cpp
     src/EBO.cpp
     src/Texture.cpp
-    src/Camera.cpp
-    3rdparty/imgui/imgui.cpp
-    3rdparty/imgui/imgui_widgets.cpp
-    3rdparty/imgui/imgui_tables.cpp
-    3rdparty/imgui/imgui_draw.cpp
-    3rdparty/imgui/imgui_demo.cpp
-    3rdparty/imgui/backends/imgui_impl_glfw.cpp
-    3rdparty/imgui/backends/imgui_impl_opengl3.cpp
+    src/VAO.cpp
+    src/VBO.cpp
+    src/shaderClass.cpp
+    src/platform/Application.cpp
+    src/view/ControlPanelView.cpp
+    src/view/SceneRenderer.cpp
+    src/viewmodel/SceneViewModel.cpp
 )
 
-# -------- IMGUI --------------
+if(RENDERGL_HAS_IMGUI)
+    list(APPEND RENDERGL_SOURCES
+        3rdparty/imgui/imgui.cpp
+        3rdparty/imgui/imgui_widgets.cpp
+        3rdparty/imgui/imgui_tables.cpp
+        3rdparty/imgui/imgui_draw.cpp
+        3rdparty/imgui/imgui_demo.cpp
+        3rdparty/imgui/backends/imgui_impl_glfw.cpp
+        3rdparty/imgui/backends/imgui_impl_opengl3.cpp
+    )
+endif()
+
+add_executable(OpenGLBinaryStyle ${RENDERGL_SOURCES})
+
 target_include_directories(OpenGLBinaryStyle PRIVATE
-    3rdparty/imgui
-    3rdparty/imgui/backends
+    ${CMAKE_SOURCE_DIR}/include
 )
 
+if(RENDERGL_HAS_IMGUI)
+    target_include_directories(OpenGLBinaryStyle PRIVATE
+        3rdparty/imgui
+        3rdparty/imgui/backends
+    )
+    target_compile_definitions(OpenGLBinaryStyle PRIVATE RENDERGL_HAS_IMGUI=1)
+endif()
 
-# Link all required libs
-target_link_libraries(OpenGLBinaryStyle
-    glad
-    glfw3
-    stb_image
-    "-framework OpenGL"
-    "-framework Cocoa"
-    "-framework IOKit"
-    "-framework CoreFoundation"
+target_compile_definitions(OpenGLBinaryStyle PRIVATE
+    RENDERGL_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources"
 )
+
+find_package(OpenGL REQUIRED)
+
+if(APPLE)
+    link_directories(${CMAKE_SOURCE_DIR}/lib/glfw/lib)
+    target_link_libraries(OpenGLBinaryStyle
+        glad
+        glfw3
+        stb_image
+        "-framework OpenGL"
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreFoundation"
+    )
+else()
+    find_package(glfw3 QUIET)
+    if(glfw3_FOUND)
+        target_link_libraries(OpenGLBinaryStyle glad glfw stb_image OpenGL::GL)
+    else()
+        target_link_libraries(OpenGLBinaryStyle glad stb_image OpenGL::GL)
+    endif()
+endif()
+
+file(COPY ${CMAKE_SOURCE_DIR}/resources/assets DESTINATION ${CMAKE_BINARY_DIR})
