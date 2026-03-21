@@ -14,6 +14,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -143,6 +146,10 @@ int main()
 {
 	// Initialize GLFW
 	glfwInit();
+	if (!glfwInit()) {
+		std::cout << "Failed to initialize GLFW\n";
+		return -1;
+	}
 
 	// Tell GLFW what version of OpenGL we are using 
 	// In this case we are using OpenGL 3.3
@@ -166,6 +173,20 @@ int main()
 
 	//Load GLAD so it configures OpenGL
 	gladLoadGL();
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		std::cout << "Failed to initialize GLAD\n";
+		return -1;
+	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 	
 	// for centering the triangle with different framebuffer size
 	// 1) register the resize callback:
@@ -253,19 +274,30 @@ int main()
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		glfwPollEvents();
 		processInput(window);
-		// Specify the color of the background
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Control Panel");
+		ImGui::Text("OpenGL + ImGui is running");
+		ImGui::SliderFloat("Speed", &speed, 0.0f, 20.0f);
+		ImGui::Text("Theta: %.2f", theta);
+		ImGui::End();
+
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// Tell OpenGL which Shader Program we want to use
+
 		shaderProgram.Activate();
 
-		camera.Inputs(window);
-		// send uniform to the shader
+		if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard)
+		{
+			camera.Inputs(window);
+		}
 		camera.CameraMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
 
-		// Only after activating (one float)
 		glUniform1f(uniID, 0.5f);
 		texture.Bind();
 
@@ -276,39 +308,32 @@ int main()
 		model = glm::rotate(model, glm::radians(theta), glm::vec3(0.0f, 1.0f, 0.0f));
 		shaderProgram.SetMat4("model", model);
 
-		// For UV distortion (float uniform)
 		GLint timeLoc = glGetUniformLocation(shaderProgram.ID, "time");
 		glUniform1f(timeLoc, (GLfloat)timeNow);
 
-		// Bind the VAO so OpenGL knows to use it
 		VAO1.Bind();
-		// Draw primitives, number of indices, datatype of indices, index of indices
 		glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(GLuint), GL_UNSIGNED_INT, 0);
-
 		VAO1.Unbind();
-		
-		// NOW ACTIVATE THE LIGHTING SHADER, VISUAL CUBE
+
 		lightProgram.Activate();
 		camera.CameraMatrix(45.0f, 0.1f, 100.0f, lightProgram, "camMatrix");
 
-		// move the lighting source
 		float radius = 2.0f;
 		glm::vec3 lightPos = glm::vec3(
 			radius * cos(glm::radians(theta)),
 			1.5f,
 			radius * sin(glm::radians(theta))
 		);
+
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.3f));
 		lightProgram.SetMat4("model", lightModel);
-		
-		// DRAW THE LIGHTING CUBE
+
 		VAO2.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		VAO2.Unbind();
 
-		// NOW ACTIVATE THE LIT CUBE  
 		cubeProgram.Activate();
 		camera.CameraMatrix(45.0f, 0.1f, 100.0f, cubeProgram, "camMatrix");
 
@@ -316,9 +341,8 @@ int main()
 		cubeModel = glm::translate(cubeModel, glm::vec3(1.0f, 0.5f, 0.5f));
 		cubeProgram.SetMat4("model", cubeModel);
 
-		// actual lighting on the lit cube
 		cubeProgram.SetFloat("ambientStrength", 0.1f);
-		cubeProgram.SetVec3("lightPos", lightPos); // same as lamp position
+		cubeProgram.SetVec3("lightPos", lightPos);
 		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		cubeProgram.SetVec3("viewPos", camera.Position);
@@ -326,11 +350,11 @@ int main()
 		VAO3.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		VAO3.Unbind();
-	
-		// Swap the back buffer with the front buffer
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(window);
-		// Take care of all GLFW events
-		glfwPollEvents();
 	}
 
 
@@ -348,6 +372,12 @@ int main()
 	
 	texture.Delete();
 	shaderProgram.Delete();
+	lightProgram.Delete();
+	cubeProgram.Delete();
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add include paths
 include_directories(
-    ${CMAKE_SOURCE_DIR}/include 
+    ${CMAKE_SOURCE_DIR}/include
     lib/glad/include
     lib/glfw/include
     lib/stb/include
@@ -30,7 +30,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/resources/assets
      DESTINATION ${CMAKE_BINARY_DIR})
 
 # Create main app
-add_executable(OpenGLBinaryStyle 
+add_executable(OpenGLBinaryStyle
     src/Main.cpp
     src/shaderClass.cpp
     src/VBO.cpp
@@ -38,7 +38,21 @@ add_executable(OpenGLBinaryStyle
     src/EBO.cpp
     src/Texture.cpp
     src/Camera.cpp
+    3rdparty/imgui/imgui.cpp
+    3rdparty/imgui/imgui_widgets.cpp
+    3rdparty/imgui/imgui_tables.cpp
+    3rdparty/imgui/imgui_draw.cpp
+    3rdparty/imgui/imgui_demo.cpp
+    3rdparty/imgui/backends/imgui_impl_glfw.cpp
+    3rdparty/imgui/backends/imgui_impl_opengl3.cpp
 )
+
+# -------- IMGUI --------------
+target_include_directories(OpenGLBinaryStyle PRIVATE
+    3rdparty/imgui
+    3rdparty/imgui/backends
+)
+
 
 # Link all required libs
 target_link_libraries(OpenGLBinaryStyle
