@@ -69,7 +69,18 @@ Separating the pyramid, light cube, and lit cube into different VAOs and shader 
 Computing a moving light position from theta.
 Using model matrices per object instead of hardcoding transforms in shaders.
 
+Light position → sent to shader
+Fragment position → from vertex shader
+Normal → from vertex shader
+Camera position → for specular
+Material → surface properties
+Light → light properties
+Fragment shader → computes final color
 
+improvement:
+attenuation lighting
+
+bugs:
 There are some issues with the glfwGetCursorPos. 
 
 Previous vertices

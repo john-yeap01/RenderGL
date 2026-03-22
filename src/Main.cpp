@@ -344,23 +344,20 @@ int main()
 
 		glm::mat4 cubeModel = glm::mat4(1.0f);
 		cubeModel = glm::translate(cubeModel, glm::vec3(1.0f, 0.5f, 0.5f));
+
 		cubeProgram.SetMat4("model", cubeModel);
-
-		cubeProgram.SetFloat("ambientStrength", 0.1f);
-		cubeProgram.SetVec3("lightPos", lightPos);
-		// cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		cubeProgram.SetVec3("viewPos", camera.Position);
+		
+		cubeProgram.SetFloat("ambientStrength", 0.1f);
+		cubeProgram.SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeProgram.SetVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		cubeProgram.SetVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		cubeProgram.SetFloat("material.shininess", 32.0f);
 
-		// cubeProgram.SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-		// cubeProgram.SetVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-		// cubeProgram.SetVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
-		// cubeProgram.SetFloat("material.shininess", 32.0f);
-
-		cubeProgram.SetVec3("material.ambient",  glm::vec3(0.0215f, 0.1745f, 0.0215f));
-cubeProgram.SetVec3("material.diffuse",  glm::vec3(0.07568f, 0.61424f, 0.07568f));
-cubeProgram.SetVec3("material.specular", glm::vec3(0.633f, 0.727811f, 0.633f));
-cubeProgram.SetFloat("material.shininess", 0.6f * 128.0f);
+		cubeProgram.SetVec3("light.position", lightPos);
+		cubeProgram.SetVec3("light.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
+		cubeProgram.SetVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		cubeProgram.SetVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		VAO3.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
