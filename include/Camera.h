@@ -37,5 +37,7 @@ class Camera
 
         void Inputs(GLFWwindow* window);
 
+        void UpdateWindowSize(int newWidth, int newHeight);
+
 };
 #endif

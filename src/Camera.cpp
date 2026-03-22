@@ -22,6 +22,12 @@ void Camera::CameraMatrix(float FOVdeg, float nearPlane, float farPlane, Shader&
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
+void Camera::UpdateWindowSize(int newWidth, int newHeight)
+{
+    width = newWidth;
+    height = newHeight;
+}
+
 void Camera::Inputs(GLFWwindow* window)
 {
 	// Handles key inputs
@@ -75,7 +81,7 @@ void Camera::Inputs(GLFWwindow* window)
 			glfwSetCursorPos(window, (winW / 2), (winH / 2));
 
 			firstClick = false;
-			ignoreLookFrames = 2;   // ignore next 2 pressed frames -- ISSUE 
+			ignoreLookFrames = 1;   // ignore next few pressed frames -- ISSUE:  https://www.reddit.com/r/opengl/comments/l1iufq/glfwgetcursorpos_bug/
 			return;
 		}
 

@@ -23,6 +23,12 @@ const unsigned int height = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+
+	Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    if (camera)
+    {
+        camera->UpdateWindowSize(width, height);
+    }
 }
 
 void processInput(GLFWwindow* window) {
@@ -145,7 +151,6 @@ GLuint indices[] = {
 int main()
 {
 	// Initialize GLFW
-	glfwInit();
 	if (!glfwInit()) {
 		std::cout << "Failed to initialize GLFW\n";
 		return -1;
@@ -172,7 +177,6 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	//Load GLAD so it configures OpenGL
-	gladLoadGL();
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD\n";
 		return -1;
@@ -206,6 +210,7 @@ int main()
 	// So on Retina: your viewport handling is more correct (as long as you also use fbWidth/fbHeight for projection).
 
 	Camera camera(fbWidth, fbHeight, glm::vec3(0.0f, 0.0f, 2.0f));
+	glfwSetWindowUserPointer(window, &camera);
 
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("/Users/at/LearnOpenGL/resources/shaders/default.vert", "/Users/at/LearnOpenGL/resources/shaders/default.frag");
@@ -343,9 +348,19 @@ int main()
 
 		cubeProgram.SetFloat("ambientStrength", 0.1f);
 		cubeProgram.SetVec3("lightPos", lightPos);
-		cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		// cubeProgram.SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		cubeProgram.SetVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		cubeProgram.SetVec3("viewPos", camera.Position);
+
+		// cubeProgram.SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		// cubeProgram.SetVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		// cubeProgram.SetVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		// cubeProgram.SetFloat("material.shininess", 32.0f);
+
+		cubeProgram.SetVec3("material.ambient",  glm::vec3(0.0215f, 0.1745f, 0.0215f));
+cubeProgram.SetVec3("material.diffuse",  glm::vec3(0.07568f, 0.61424f, 0.07568f));
+cubeProgram.SetVec3("material.specular", glm::vec3(0.633f, 0.727811f, 0.633f));
+cubeProgram.SetFloat("material.shininess", 0.6f * 128.0f);
 
 		VAO3.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
