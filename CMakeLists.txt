@@ -24,6 +24,7 @@ add_library(stb_image STATIC
 )
 target_include_directories(stb_image PUBLIC
     lib/stb/include
+    src/
 )
 
 file(COPY ${CMAKE_SOURCE_DIR}/resources/assets

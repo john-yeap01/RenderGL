@@ -27,7 +27,7 @@ class Camera
         float speed = 0.0001f;
         float sensitivity = 50.0f;
         int ignoreLookFrames = 0;
-        bool wasLookingLastFrame = false;
+        bool wasLookingLastFrame_ = false;
         
 
         Camera (int width, int height, glm::vec3 Position);

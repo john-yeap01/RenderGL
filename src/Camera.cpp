@@ -64,16 +64,17 @@ void Camera::Inputs(GLFWwindow* window)
 		speed = 0.01f;
 	}
 
-
     int winW, winH;
     glfwGetWindowSize(window, &winW, &winH);
-	
-
 
 	// Handles mouse inputs
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	{	
+		if (!wasLookingLastFrame_){
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			wasLookingLastFrame_ = true;
+			std::cout << "Setting disabled once" << std::endl;
+		}
 
 		if (firstClick)
 		{
@@ -81,7 +82,7 @@ void Camera::Inputs(GLFWwindow* window)
 			glfwSetCursorPos(window, (winW / 2), (winH / 2));
 
 			firstClick = false;
-			ignoreLookFrames = 1;   // ignore next few pressed frames -- ISSUE:  https://www.reddit.com/r/opengl/comments/l1iufq/glfwgetcursorpos_bug/
+			ignoreLookFrames = 2;   // ignore next few pressed frames -- ISSUE:  https://www.reddit.com/r/opengl/comments/l1iufq/glfwgetcursorpos_bug/
 			return;
 		}
 
@@ -119,8 +120,12 @@ void Camera::Inputs(GLFWwindow* window)
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
 	{
 		// Unhides cursor since camera is not looking around anymore
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		if (wasLookingLastFrame_){
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		firstClick = true;
 		ignoreLookFrames = 0;
+		wasLookingLastFrame_ = false;
+		std::cout << "set normal" << std::endl;
+		}
 	}
 }

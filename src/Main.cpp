@@ -18,17 +18,22 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "model/CameraModel.h"
+#include "viewmodel/CameraViewModel.h"
+
 const unsigned int width = 800;
 const unsigned int height = 800;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
     glViewport(0, 0, width, height);
 
-	Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-    if (camera)
+    CameraModel* cameraModel = static_cast<CameraModel*>(glfwGetWindowUserPointer(window));
+    if (cameraModel)
     {
-        camera->UpdateWindowSize(width, height);
+        cameraModel->SetAspect(static_cast<float>(width), static_cast<float>(height));
     }
+	std::cout << "resizing window" << std::endl;
 }
 
 void processInput(GLFWwindow* window) {
@@ -148,6 +153,7 @@ GLuint indices[] = {
 };
 
 
+
 int main()
 {
 	// Initialize GLFW
@@ -205,12 +211,21 @@ int main()
 	int winW, winH;
 	glfwGetWindowSize(window, &winW, &winH);
 	std::cout << "Window size: " << winW <<  "×" << winH << '\n';
+	CameraModel cameraModel;
+    cameraModel.m_position_ = glm::vec3(0.0f, 0.0f, 2.0f);
+    cameraModel.m_forward_  = glm::vec3(0.0f, 0.0f, -1.0f);
+    cameraModel.m_up_       = glm::vec3(0.0f, 1.0f, 0.0f);
+    cameraModel.m_fov_      = 45.0f;
+    cameraModel.m_nearPlane_ = 0.1f;
+    cameraModel.m_farPlane_  = 100.0f;
+    cameraModel.SetAspect(static_cast<float>(fbWidth), static_cast<float>(fbHeight));
+
+    CameraController cameraController;
+
+    glfwSetWindowUserPointer(window, &cameraModel);
 	// 	normally simply just glViewport(0,0,width,height);
 	// improved by calling glfwGetFramebufferSize and using that for glViewport, which is better on macOS Retina.
 	// So on Retina: your viewport handling is more correct (as long as you also use fbWidth/fbHeight for projection).
-
-	Camera camera(fbWidth, fbHeight, glm::vec3(0.0f, 0.0f, 2.0f));
-	glfwSetWindowUserPointer(window, &camera);
 
 	// Generates Shader object using shaders default.vert and default.frag
 	Shader shaderProgram("/Users/at/LearnOpenGL/resources/shaders/default.vert", "/Users/at/LearnOpenGL/resources/shaders/default.frag");
@@ -275,10 +290,24 @@ int main()
 	
 	float theta = 0.0f;
 	float speed = 5.0f; // deg / sec
+
+	double lastTime = glfwGetTime();
+	int frameCount = 0;
+	double fps = 0.0;
 	
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
+		double currentTime = glfwGetTime();
+		frameCount++;
+
+		if (currentTime - lastTime >= 1.0)
+		{
+			fps = frameCount / (currentTime - lastTime);
+			frameCount = 0;
+			lastTime = currentTime;
+		}
+
 		glfwPollEvents();
 		processInput(window);
 
@@ -290,6 +319,8 @@ int main()
 		ImGui::Text("OpenGL + ImGui is running");
 		ImGui::SliderFloat("Speed", &speed, 0.0f, 20.0f);
 		ImGui::Text("Theta: %.2f", theta);
+		ImGui::Text("FPS: %.1f", fps);
+		ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 		ImGui::End();
 
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
@@ -299,9 +330,13 @@ int main()
 
 		if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard)
 		{
-			camera.Inputs(window);
+			cameraController.HandleInput(window, cameraModel);
 		}
-		camera.CameraMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
+		// camera.CameraMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "camMatrix");
+		glm::mat4 view = cameraModel.GetView();
+		glm::mat4 proj = cameraModel.GetProjection();
+		glm::mat4 camMatrix = proj * view;
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camMatrix));
 
 		glUniform1f(uniID, 0.5f);
 		texture.Bind();
@@ -321,7 +356,12 @@ int main()
 		VAO1.Unbind();
 
 		lightProgram.Activate();
-		camera.CameraMatrix(45.0f, 0.1f, 100.0f, lightProgram, "camMatrix");
+        glUniformMatrix4fv(
+            glGetUniformLocation(lightProgram.ID, "camMatrix"),
+            1,
+            GL_FALSE,
+            glm::value_ptr(camMatrix)
+        );
 
 		float radius = 2.0f;
 		glm::vec3 lightPos = glm::vec3(
@@ -340,13 +380,18 @@ int main()
 		VAO2.Unbind();
 
 		cubeProgram.Activate();
-		camera.CameraMatrix(45.0f, 0.1f, 100.0f, cubeProgram, "camMatrix");
+		glUniformMatrix4fv(
+            glGetUniformLocation(cubeProgram.ID, "camMatrix"),
+            1,
+            GL_FALSE,
+            glm::value_ptr(camMatrix)
+        );
 
 		glm::mat4 cubeModel = glm::mat4(1.0f);
 		cubeModel = glm::translate(cubeModel, glm::vec3(1.0f, 0.5f, 0.5f));
 
 		cubeProgram.SetMat4("model", cubeModel);
-		cubeProgram.SetVec3("viewPos", camera.Position);
+		cubeProgram.SetVec3("viewPos", cameraModel.m_position_);
 		
 		cubeProgram.SetFloat("ambientStrength", 0.1f);
 		cubeProgram.SetVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
