@@ -41,6 +41,7 @@ add_executable(OpenGLBinaryStyle
     src/Camera.cpp
     src/renderer/Renderer.cpp
     src/gui/MainPanelView.cpp
+    src/model/SceneModel.cpp
     3rdparty/imgui/imgui.cpp
     3rdparty/imgui/imgui_widgets.cpp
     3rdparty/imgui/imgui_tables.cpp

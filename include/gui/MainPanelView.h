@@ -1,7 +1,9 @@
 #pragma once
 
+#include "model/SceneModel.h"
+
 class MainPanelView
 {
 public:
-    void Draw(float& speed, float theta, double fps) const;
+    void Draw(SceneModel& sceneModel) const;
 };

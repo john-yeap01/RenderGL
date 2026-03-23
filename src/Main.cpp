@@ -17,6 +17,7 @@
 #include "imgui.h"
 #include "services/GuiService.h"
 #include "gui/MainPanelView.h"
+#include "model/SceneModel.h"
 
 #include "model/CameraModel.h"
 #include "viewmodel/CameraViewModel.h"
@@ -82,6 +83,10 @@ int main()
     Renderer renderer;
 	GuiService imguiService;
 	MainPanelView mainPanelView;
+	SceneModel sceneModel;
+
+	double lastTime = glfwGetTime();
+	int frameCount = 0;
 
 	imguiService.Initialize(window, "#version 330");
 
@@ -120,7 +125,7 @@ int main()
 
     Shader cubeProgram("/Users/at/LearnOpenGL/resources/shaders/cube.vert", "/Users/at/LearnOpenGL/resources/shaders/cube.frag");
 
-    // Generates Vertex Array Object and binds it
+    // Generates Vertex Array Object
     VAO VAO1;
     VAO VAO2;
     VAO VAO3;
@@ -128,15 +133,13 @@ int main()
     // Use FIRST vert array now
     VAO1.Bind();
     // Generates Vertex Buffer Object and links it to vertices
-    VBO VBO1(vertices, sizeof(vertices));
-    // Generates Element Buffer Object and links it to indices
-    EBO EBO1(indices, sizeof(indices));
+    VBO VBO1(vertices, vertices_size_bytes);
+	EBO EBO1(indices, indices_size_bytes);
 
-    // VBO for the light source
-    VBO VBO2(light_vertices, sizeof(light_vertices));
-
-    // VBO for cube
-    VBO VBO3(cube_vertices, sizeof(cube_vertices));
+	//light cube
+	VBO VBO2(light_vertices, light_vertices_size_bytes);
+	//lit cube
+	VBO VBO3(cube_vertices, cube_vertices_size_bytes);
 
     // Links VBO to VAO -- how shader receives the vertex data
     // Reads the VBO data, its type, and its attribute stride and offset
@@ -173,13 +176,6 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    float theta = 0.0f;
-    float speed = 5.0f; // deg / sec
-
-    double lastTime = glfwGetTime();
-    int frameCount = 0;
-    double fps = 0.0;
-
     // Main while loop
     while (!glfwWindowShouldClose(window))
     {
@@ -188,7 +184,7 @@ int main()
 
         if (currentTime - lastTime >= 1.0)
         {
-            fps = frameCount / (currentTime - lastTime);
+            sceneModel.fps = frameCount / (currentTime - lastTime);
             frameCount = 0;
             lastTime = currentTime;
         }
@@ -197,7 +193,7 @@ int main()
         processInput(window);
 
 		imguiService.BeginFrame();
-		mainPanelView.Draw(speed, theta, fps);
+		mainPanelView.Draw(sceneModel);
 
         if (!ImGui::GetIO().WantCaptureMouse && !ImGui::GetIO().WantCaptureKeyboard)
         {
@@ -205,24 +201,24 @@ int main()
         }
 
         double timeNow = glfwGetTime();
-        theta = speed * static_cast<float>(timeNow);
+        sceneModel.theta = sceneModel.speed * static_cast<float>(timeNow);
 
         renderer.BeginFrame();
         renderer.RenderScene(
-            cameraModel,
-            shaderProgram,
-            lightProgram,
-            cubeProgram,
-            VAO1,
-            VAO2,
-            VAO3,
-            texture,
-            uniID,
-            sizeof(indices) / sizeof(GLuint),
-            theta,
-            static_cast<float>(timeNow)
-        );
-		
+			cameraModel,
+			shaderProgram,
+			lightProgram,
+			cubeProgram,
+			VAO1,
+			VAO2,
+			VAO3,
+			texture,
+			uniID,
+			indices_count,
+			sceneModel.theta,
+			static_cast<float>(timeNow)
+		);
+
 		imguiService.EndFrame();
 
         glfwSwapBuffers(window);
