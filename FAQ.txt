@@ -69,6 +69,7 @@ Separating the pyramid, light cube, and lit cube into different VAOs and shader 
 Computing a moving light position from theta.
 Using model matrices per object instead of hardcoding transforms in shaders.
 
+OpenGL PIPELINE:
 Light position → sent to shader
 Fragment position → from vertex shader
 Normal → from vertex shader
@@ -76,6 +77,17 @@ Camera position → for specular
 Material → surface properties
 Light → light properties
 Fragment shader → computes final color
+
+Example flow
+Imagine the user drags a light intensity slider.
+GUI View
+Draws slider.
+GUI ViewModel
+Receives new slider value, updates Light.intensity.
+Model
+Stores new light value.
+Renderer
+Reads light value from model/scene and draws with it.
 
 improvement:
 attenuation lighting
